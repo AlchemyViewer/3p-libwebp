@@ -51,6 +51,18 @@ pushd "$LIBWEBP_SOURCE_DIR"
 
             nmake /f Makefile.vc CFG=debug-static RTLIBCFG=dynamic OBJDIR=output
             nmake /f Makefile.vc CFG=release-static RTLIBCFG=dynamic OBJDIR=output
+
+            if [ "$AUTOBUILD_ADDRSIZE" = 32 ]
+            then
+                outarchdir="x86"
+            else
+                outarchdir="x64"
+            fi
+
+            cp -a output/debug-static/$outarchdir/lib/*.lib $stage/lib/debug/
+            cp -a output/debug-static/$outarchdir/lib/*.pdb $stage/lib/debug/
+
+            cp -a output/release-static/$outarchdir/lib/*.lib $stage/lib/release/
         ;;
 
         darwin*)
@@ -60,6 +72,11 @@ pushd "$LIBWEBP_SOURCE_DIR"
 
         ;;
     esac
+
+    cp -a src/webp/decode.h $stage/include/webp/
+    cp -a src/webp/encode.h $stage/include/webp/
+    cp -a src/webp/types.h $stage/include/webp/
+
     mkdir -p "$stage/LICENSES"
     cp COPYING "$stage/LICENSES/libwebp.txt"
 popd

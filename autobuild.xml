@@ -43,7 +43,6 @@
           </map>
           <key>manifest</key>
           <array>
-            <string>LICENSES/*</string>
             <string>include/*</string>
           </array>
           <key>name</key>
