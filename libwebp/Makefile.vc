@@ -99,7 +99,7 @@ LIBWEBPDEMUX_BASENAME = $(LIBWEBPDEMUX_BASENAME)_debug
 !ELSE IF "$(CFG)" == "release-dynamic"
 CC        = $(CCNODBG)
 RC        = $(RCNODBG)
-CFLAGS    = $(CFLAGS) /GL
+CFLAGS    = $(CFLAGS) /GL /Gy
 LDFLAGS   = $(LDFLAGS) /LTCG
 DLLBUILD  = TRUE
 !ELSE IF "$(CFG)" == "debug-dynamic"
