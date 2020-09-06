@@ -49,20 +49,25 @@ pushd "$LIBWEBP_SOURCE_DIR"
         windows*)
             load_vsvars
 
-            nmake /f Makefile.vc CFG=debug-static RTLIBCFG=dynamic OBJDIR=output
-            nmake /f Makefile.vc CFG=release-static RTLIBCFG=dynamic OBJDIR=output
-
             if [ "$AUTOBUILD_ADDRSIZE" = 32 ]
             then
-                outarchdir="x86"
+                archflag="x86"
             else
-                outarchdir="x64"
+                archflag="x64"
             fi
 
-            cp -a output/debug-static/$outarchdir/lib/*.lib $stage/lib/debug/
-            cp -a output/debug-static/$outarchdir/lib/*.pdb $stage/lib/debug/
+            nmake /f Makefile.vc CFG=debug-dynamic RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
+            nmake /f Makefile.vc CFG=release-dynamic RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
 
-            cp -a output/release-static/$outarchdir/lib/*.lib $stage/lib/release/
+            cp -a output/debug-dynamic/$archflag/bin/*.dll $stage/lib/debug/
+            cp -a output/debug-dynamic/$archflag/lib/*.lib $stage/lib/debug/
+            cp -a output/debug-dynamic/$archflag/lib/*.exp $stage/lib/debug/
+            cp -a output/debug-dynamic/$archflag/lib/*.pdb $stage/lib/debug/
+
+            cp -a output/release-dynamic/$archflag/bin/*.dll $stage/lib/release/
+            cp -a output/release-dynamic/$archflag/lib/*.lib $stage/lib/release/
+            cp -a output/release-dynamic/$archflag/lib/*.exp $stage/lib/release/
+            cp -a output/release-dynamic/$archflag/lib/*.pdb $stage/lib/release/
 
             cp -a src/webp/decode.h $stage/include/webp/
             cp -a src/webp/encode.h $stage/include/webp/
