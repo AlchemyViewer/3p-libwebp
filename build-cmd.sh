@@ -30,13 +30,10 @@ source_environment_tempfile="$stage/source_environment.sh"
 
 LIBWEBP_SOURCE_DIR="libwebp"
 
-# used in VERSION.txt but common to all bit-widths and platforms
-build=${AUTOBUILD_BUILD_ID:=0}
-
 # version will be (e.g.) "1.4.0"
 version="1.1.0"
 
-echo "${version}.${build}" > "${stage}/VERSION.txt"
+echo "${version}" > "${stage}/VERSION.txt"
 
 # Create the staging folders
 mkdir -p "$stage/lib"/{debug,release}
