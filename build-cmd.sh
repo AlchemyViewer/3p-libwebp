@@ -72,7 +72,98 @@ pushd "$LIBWEBP_SOURCE_DIR"
         ;;
 
         darwin*)
-      
+            # Setup osx sdk platform
+            SDKNAME="macosx10.15"
+            export SDKROOT=$(xcodebuild -version -sdk ${SDKNAME} Path)
+            export MACOSX_DEPLOYMENT_TARGET=10.13
+
+            # Setup build flags
+            ARCH_FLAGS="-arch x86_64"
+            SDK_FLAGS="-mmacosx-version-min=${MACOSX_DEPLOYMENT_TARGET} --sysroot=${SDKROOT}"
+            DEBUG_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -Og -g -msse4.2 -fPIC -DPIC"
+            RELEASE_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -Ofast -ffast-math -g -msse4.2 -fPIC -DPIC -fstack-protector-strong"
+            DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
+            RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
+            DEBUG_CXXFLAGS="$DEBUG_COMMON_FLAGS -std=c++17"
+            RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
+            DEBUG_CPPFLAGS="-DPIC"
+            RELEASE_CPPFLAGS="-DPIC"
+            DEBUG_LDFLAGS="$ARCH_FLAGS -headerpad_max_install_names"
+            RELEASE_LDFLAGS="$ARCH_FLAGS -headerpad_max_install_names"
+
+            JOBS=`sysctl -n hw.ncpu`
+
+            mkdir -p "build_debug"
+            pushd "build_debug"
+                CFLAGS="$DEBUG_CFLAGS" \
+                CXXFLAGS="$DEBUG_CXXFLAGS" \
+                CPPFLAGS="$DEBUG_CPPFLAGS" \
+                LDFLAGS="$DEBUG_LDFLAGS" \
+                cmake .. -G"Unix Makefiles" -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF \
+                    -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
+                    -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF -DWEBP_BUILD_WEBPINFO=OFF \
+                    -DWEBP_BUILD_WEBPMUX=OFF \
+                    -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
+                    -DCMAKE_CXX_FLAGS="$DEBUG_CXXFLAGS" \
+                    -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 \
+                    -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
+                    -DCMAKE_OSX_SYSROOT=${SDKROOT} \
+                    -DCMAKE_MACOSX_RPATH=YES -DCMAKE_INSTALL_PREFIX=$stage
+
+                cmake --build . -j$JOBS --config Debug
+
+                cp -a libwebp*.dylib* "${stage}/lib/debug/"
+            popd
+
+            mkdir -p "build_release"
+            pushd "build_release"
+                CFLAGS="$RELEASE_CFLAGS" \
+                CXXFLAGS="$RELEASE_CXXFLAGS" \
+                CPPFLAGS="$RELEASE_CPPFLAGS" \
+                LDFLAGS="$RELEASE_LDFLAGS" \
+                cmake .. -G"Unix Makefiles" -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF \
+                    -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_EXTRAS=OFF \
+                    -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
+                    -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF \
+                    -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
+                    -DCMAKE_CXX_FLAGS="$RELEASE_CXXFLAGS" \
+                    -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 \
+                    -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
+                    -DCMAKE_OSX_SYSROOT=${SDKROOT} \
+                    -DCMAKE_MACOSX_RPATH=YES -DCMAKE_INSTALL_PREFIX=$stage
+
+                cmake --build . -j$JOBS --config Release
+
+                cp -a libwebp*.dylib* "${stage}/lib/release/"
+            popd
+
+            pushd "${stage}/lib/debug"
+                fix_dylib_id "libwebp.dylib"
+                fix_dylib_id "libwebpdecoder.dylib"
+                fix_dylib_id "libwebpdemux.dylib"
+                dsymutil libwebp.dylib
+                dsymutil libwebpdecoder.dylib
+                dsymutil libwebpdemux.dylib
+                strip -x -S libwebp.dylib
+                strip -x -S libwebpdecoder.dylib
+                strip -x -S libwebpdemux.dylib
+            popd
+
+            pushd "${stage}/lib/release"
+                fix_dylib_id "libwebp.dylib"
+                fix_dylib_id "libwebpdecoder.dylib"
+                fix_dylib_id "libwebpdemux.dylib"
+                dsymutil libwebp.dylib
+                dsymutil libwebpdecoder.dylib
+                dsymutil libwebpdemux.dylib
+                strip -x -S libwebp.dylib
+                strip -x -S libwebpdecoder.dylib
+                strip -x -S libwebpdemux.dylib
+            popd
+
+            cp -a src/webp/decode.h $stage/include/webp/
+            cp -a src/webp/encode.h $stage/include/webp/
+            cp -a src/webp/types.h $stage/include/webp/
         ;;
         linux*)
             # Linux build environment at Linden comes pre-polluted with stuff that can
