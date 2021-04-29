@@ -66,14 +66,14 @@ pushd "$LIBWEBP_SOURCE_DIR"
 
         darwin*)
             # Setup osx sdk platform
-            SDKNAME="macosx10.15"
+            SDKNAME="macosx"10.15""
             export SDKROOT=$(xcodebuild -version -sdk ${SDKNAME} Path)
             export MACOSX_DEPLOYMENT_TARGET=10.13
 
             # Setup build flags
             ARCH_FLAGS="-arch x86_64"
             SDK_FLAGS="-mmacosx-version-min=${MACOSX_DEPLOYMENT_TARGET} -isysroot ${SDKROOT}"
-            DEBUG_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -Og -g -msse4.2 -fPIC -DPIC"
+            DEBUG_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -O0 -g -msse4.2 -fPIC -DPIC"
             RELEASE_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -Ofast -ffast-math -g -msse4.2 -fPIC -DPIC -fstack-protector-strong"
             DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
             RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
@@ -81,8 +81,8 @@ pushd "$LIBWEBP_SOURCE_DIR"
             RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
             DEBUG_CPPFLAGS="-DPIC"
             RELEASE_CPPFLAGS="-DPIC"
-            DEBUG_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names -Wl,-macos_version_min,$MACOSX_DEPLOYMENT_TARGET"
-            RELEASE_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names -Wl,-macos_version_min,$MACOSX_DEPLOYMENT_TARGET"
+            DEBUG_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names"
+            RELEASE_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names"
 
             JOBS=`sysctl -n hw.ncpu`
 
@@ -108,7 +108,7 @@ pushd "$LIBWEBP_SOURCE_DIR"
 
                 cmake --build . -j$JOBS --config Debug
 
-                cp -a libwebp*.dylib* "${stage}/lib/debug/"
+                cp -a libwebp*.a* "${stage}/lib/debug/"
             popd
 
             mkdir -p "build_release"
@@ -132,32 +132,33 @@ pushd "$LIBWEBP_SOURCE_DIR"
 
                 cmake --build . -j$JOBS --config Release
 
-                cp -a libwebp*.dylib* "${stage}/lib/release/"
+                cp -a libwebp*.a* "${stage}/lib/release/"
             popd
 
-            pushd "${stage}/lib/debug"
-                fix_dylib_id "libwebp.dylib"
-                fix_dylib_id "libwebpdecoder.dylib"
-                fix_dylib_id "libwebpdemux.dylib"
-                dsymutil libwebp.dylib
-                dsymutil libwebpdecoder.dylib
-                dsymutil libwebpdemux.dylib
-                strip -x -S libwebp.dylib
-                strip -x -S libwebpdecoder.dylib
-                strip -x -S libwebpdemux.dylib
-            popd
+            # For dynamic library builds
+            # pushd "${stage}/lib/debug"
+            #     fix_dylib_id "libwebp.dylib"
+            #     fix_dylib_id "libwebpdecoder.dylib"
+            #     fix_dylib_id "libwebpdemux.dylib"
+            #     dsymutil libwebp.dylib
+            #     dsymutil libwebpdecoder.dylib
+            #     dsymutil libwebpdemux.dylib
+            #     strip -x -S libwebp.dylib
+            #     strip -x -S libwebpdecoder.dylib
+            #     strip -x -S libwebpdemux.dylib
+            # popd
 
-            pushd "${stage}/lib/release"
-                fix_dylib_id "libwebp.dylib"
-                fix_dylib_id "libwebpdecoder.dylib"
-                fix_dylib_id "libwebpdemux.dylib"
-                dsymutil libwebp.dylib
-                dsymutil libwebpdecoder.dylib
-                dsymutil libwebpdemux.dylib
-                strip -x -S libwebp.dylib
-                strip -x -S libwebpdecoder.dylib
-                strip -x -S libwebpdemux.dylib
-            popd
+            # pushd "${stage}/lib/release"
+            #     fix_dylib_id "libwebp.dylib"
+            #     fix_dylib_id "libwebpdecoder.dylib"
+            #     fix_dylib_id "libwebpdemux.dylib"
+            #     dsymutil libwebp.dylib
+            #     dsymutil libwebpdecoder.dylib
+            #     dsymutil libwebpdemux.dylib
+            #     strip -x -S libwebp.dylib
+            #     strip -x -S libwebpdecoder.dylib
+            #     strip -x -S libwebpdemux.dylib
+            # popd
 
             cp -a src/webp/decode.h $stage/include/webp/
             cp -a src/webp/encode.h $stage/include/webp/
