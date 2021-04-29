@@ -27,8 +27,8 @@ PLATFORM_LDFLAGS = /SAFESEH
 ## Nothing more to do below this line!
 
 NOLOGO     = /nologo
-CCNODBG    = cl.exe $(NOLOGO) /O2 /Ob3 /Zi /DNDEBUG
-CCDEBUG    = cl.exe $(NOLOGO) /Od /Gm /Zi /D_DEBUG /RTC1
+CCNODBG    = cl.exe $(NOLOGO) /O2 /Ob3 /DNDEBUG
+CCDEBUG    = cl.exe $(NOLOGO) /Od /Gm /D_DEBUG /RTC1
 CFLAGS     = /I. /Isrc $(NOLOGO) /W3 /EHsc /c
 CFLAGS     = $(CFLAGS) /DWIN32 /D_CRT_SECURE_NO_WARNINGS /DWIN32_LEAN_AND_MEAN
 LDFLAGS    = /LARGEADDRESSAWARE /MANIFEST /NXCOMPAT /DYNAMICBASE /DEBUG:FULL
@@ -86,10 +86,10 @@ OUTPUT_DIRS = $(DIRBIN) $(DIRINC) $(DIRLIB) \
 
 # Target configuration
 !IF "$(CFG)" == "release-static"
-CC             = $(CCNODBG)
+CC             = $(CCNODBG) /Z7
 STATICLIBBUILD = TRUE
 !ELSE IF "$(CFG)" == "debug-static"
-CC             = $(CCDEBUG)
+CC             = $(CCDEBUG) /Z7
 RTLIB          = $(RTLIBD)
 STATICLIBBUILD = TRUE
 LIBWEBPDECODER_BASENAME = $(LIBWEBPDECODER_BASENAME)_debug
@@ -97,13 +97,13 @@ LIBWEBP_BASENAME = $(LIBWEBP_BASENAME)_debug
 LIBWEBPMUX_BASENAME = $(LIBWEBPMUX_BASENAME)_debug
 LIBWEBPDEMUX_BASENAME = $(LIBWEBPDEMUX_BASENAME)_debug
 !ELSE IF "$(CFG)" == "release-dynamic"
-CC        = $(CCNODBG)
+CC        = $(CCNODBG) /Zi
 RC        = $(RCNODBG)
 CFLAGS    = $(CFLAGS) /GL /Gy
 LDFLAGS   = $(LDFLAGS) /LTCG
 DLLBUILD  = TRUE
 !ELSE IF "$(CFG)" == "debug-dynamic"
-CC        = $(CCDEBUG)
+CC        = $(CCDEBUG) /Zi
 RC        = $(RCDEBUG)
 RTLIB     = $(RTLIBD)
 DLLBUILD  = TRUE

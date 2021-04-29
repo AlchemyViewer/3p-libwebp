@@ -53,18 +53,11 @@ pushd "$LIBWEBP_SOURCE_DIR"
                 archflag="x64"
             fi
 
-            nmake /f Makefile.vc CFG=debug-dynamic RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
-            nmake /f Makefile.vc CFG=release-dynamic RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
+            nmake /f Makefile.vc CFG=debug-static RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
+            nmake /f Makefile.vc CFG=release-static RTLIBCFG=dynamic OBJDIR=output ARCH=$archflag
 
-            cp -a output/debug-dynamic/$archflag/bin/*.dll $stage/lib/debug/
-            cp -a output/debug-dynamic/$archflag/lib/*.lib $stage/lib/debug/
-            cp -a output/debug-dynamic/$archflag/lib/*.exp $stage/lib/debug/
-            cp -a output/debug-dynamic/$archflag/lib/*.pdb $stage/lib/debug/
-
-            cp -a output/release-dynamic/$archflag/bin/*.dll $stage/lib/release/
-            cp -a output/release-dynamic/$archflag/lib/*.lib $stage/lib/release/
-            cp -a output/release-dynamic/$archflag/lib/*.exp $stage/lib/release/
-            cp -a output/release-dynamic/$archflag/lib/*.pdb $stage/lib/release/
+            cp -a output/debug-static/$archflag/lib/*.lib $stage/lib/debug/
+            cp -a output/release-static/$archflag/lib/*.lib $stage/lib/release/
 
             cp -a src/webp/decode.h $stage/include/webp/
             cp -a src/webp/encode.h $stage/include/webp/
