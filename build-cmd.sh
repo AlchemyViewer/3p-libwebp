@@ -93,7 +93,7 @@ pushd "$LIBWEBP_SOURCE_DIR"
                 CPPFLAGS="$DEBUG_CPPFLAGS" \
                 LDFLAGS="$DEBUG_LDFLAGS" \
                 cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="Debug" \
-                    -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF \
+                    -DBUILD_SHARED_LIBS=OFF -DWEBP_BUILD_ANIM_UTILS=OFF \
                     -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF \
                     -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
                     -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
@@ -118,7 +118,7 @@ pushd "$LIBWEBP_SOURCE_DIR"
                 CPPFLAGS="$RELEASE_CPPFLAGS" \
                 LDFLAGS="$RELEASE_LDFLAGS" \
                 cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" \
-                    -DBUILD_SHARED_LIBS=ON -DWEBP_BUILD_ANIM_UTILS=OFF \
+                    -DBUILD_SHARED_LIBS=OFF -DWEBP_BUILD_ANIM_UTILS=OFF \
                     -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF \
                     -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
                     -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
