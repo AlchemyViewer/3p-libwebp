@@ -276,6 +276,7 @@ libwebpdspdecode_sse41_la_LIBADD =
 am_libwebpdspdecode_sse41_la_OBJECTS =  \
 	libwebpdspdecode_sse41_la-alpha_processing_sse41.lo \
 	libwebpdspdecode_sse41_la-dec_sse41.lo \
+	libwebpdspdecode_sse41_la-lossless_sse41.lo \
 	libwebpdspdecode_sse41_la-upsampling_sse41.lo \
 	libwebpdspdecode_sse41_la-yuv_sse41.lo
 libwebpdspdecode_sse41_la_OBJECTS =  \
@@ -369,6 +370,7 @@ am__depfiles_remade = ./$(DEPDIR)/libwebpdsp_la-alpha_processing.Plo \
 	./$(DEPDIR)/libwebpdspdecode_sse2_la-yuv_sse2.Plo \
 	./$(DEPDIR)/libwebpdspdecode_sse41_la-alpha_processing_sse41.Plo \
 	./$(DEPDIR)/libwebpdspdecode_sse41_la-dec_sse41.Plo \
+	./$(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Plo \
 	./$(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Plo \
 	./$(DEPDIR)/libwebpdspdecode_sse41_la-yuv_sse41.Plo
 am__mv = mv -f
@@ -623,7 +625,7 @@ COMMON_SOURCES = alpha_processing.c cpu.c dec.c dec_clip_tables.c \
 	rescaler.c upsampling.c yuv.c yuv.h
 ENC_SOURCES = cost.c enc.c lossless_enc.c quant.h ssim.c
 libwebpdspdecode_sse41_la_SOURCES = alpha_processing_sse41.c \
-	dec_sse41.c upsampling_sse41.c yuv_sse41.c
+	dec_sse41.c lossless_sse41.c upsampling_sse41.c yuv_sse41.c
 libwebpdspdecode_sse41_la_CPPFLAGS = $(libwebpdsp_la_CPPFLAGS)
 libwebpdspdecode_sse41_la_CFLAGS = $(AM_CFLAGS) $(SSE41_FLAGS)
 libwebpdspdecode_sse2_la_SOURCES = alpha_processing_sse2.c \
@@ -859,6 +861,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse2_la-yuv_sse2.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse41_la-alpha_processing_sse41.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse41_la-dec_sse41.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libwebpdspdecode_sse41_la-yuv_sse41.Plo@am__quote@ # am--include-marker
 
@@ -1382,6 +1385,13 @@ libwebpdspdecode_sse41_la-dec_sse41.lo: dec_sse41.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libwebpdspdecode_sse41_la_CPPFLAGS) $(CPPFLAGS) $(libwebpdspdecode_sse41_la_CFLAGS) $(CFLAGS) -c -o libwebpdspdecode_sse41_la-dec_sse41.lo `test -f 'dec_sse41.c' || echo '$(srcdir)/'`dec_sse41.c
 
+libwebpdspdecode_sse41_la-lossless_sse41.lo: lossless_sse41.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libwebpdspdecode_sse41_la_CPPFLAGS) $(CPPFLAGS) $(libwebpdspdecode_sse41_la_CFLAGS) $(CFLAGS) -MT libwebpdspdecode_sse41_la-lossless_sse41.lo -MD -MP -MF $(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Tpo -c -o libwebpdspdecode_sse41_la-lossless_sse41.lo `test -f 'lossless_sse41.c' || echo '$(srcdir)/'`lossless_sse41.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Tpo $(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='lossless_sse41.c' object='libwebpdspdecode_sse41_la-lossless_sse41.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libwebpdspdecode_sse41_la_CPPFLAGS) $(CPPFLAGS) $(libwebpdspdecode_sse41_la_CFLAGS) $(CFLAGS) -c -o libwebpdspdecode_sse41_la-lossless_sse41.lo `test -f 'lossless_sse41.c' || echo '$(srcdir)/'`lossless_sse41.c
+
 libwebpdspdecode_sse41_la-upsampling_sse41.lo: upsampling_sse41.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libwebpdspdecode_sse41_la_CPPFLAGS) $(CPPFLAGS) $(libwebpdspdecode_sse41_la_CFLAGS) $(CFLAGS) -MT libwebpdspdecode_sse41_la-upsampling_sse41.lo -MD -MP -MF $(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Tpo -c -o libwebpdspdecode_sse41_la-upsampling_sse41.lo `test -f 'upsampling_sse41.c' || echo '$(srcdir)/'`upsampling_sse41.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Tpo $(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Plo
@@ -1621,6 +1631,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse2_la-yuv_sse2.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-alpha_processing_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-dec_sse41.Plo
+	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-yuv_sse41.Plo
 	-rm -f Makefile
@@ -1738,6 +1749,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse2_la-yuv_sse2.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-alpha_processing_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-dec_sse41.Plo
+	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-lossless_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-upsampling_sse41.Plo
 	-rm -f ./$(DEPDIR)/libwebpdspdecode_sse41_la-yuv_sse41.Plo
 	-rm -f Makefile
