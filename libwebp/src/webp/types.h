@@ -43,7 +43,7 @@ typedef long long int int64_t;
 #  define WEBP_EXTERN extern __attribute__ ((visibility ("default")))
 # else
 #  if defined(_MSC_VER) && defined(WEBP_DLL)
-#   define WEBP_EXTERN __declspec(dllimport)
+#   define WEBP_EXTERN __declspec(dllexport)
 #  else
 #   define WEBP_EXTERN extern
 #  endif
