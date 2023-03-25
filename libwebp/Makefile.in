@@ -349,6 +349,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+webp_libname_prefix = @webp_libname_prefix@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = sharpyuv src imageio man $(am__append_1) examples
 EXTRA_DIST = COPYING autogen.sh

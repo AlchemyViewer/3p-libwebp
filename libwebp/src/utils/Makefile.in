@@ -373,6 +373,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+webp_libname_prefix = @webp_libname_prefix@
 noinst_LTLIBRARIES = libwebputils.la $(am__append_1)
 common_HEADERS = ../webp/types.h
 commondir = $(includedir)/webp
