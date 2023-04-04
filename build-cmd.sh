@@ -104,11 +104,13 @@ pushd "$LIBWEBP_SOURCE_DIR"
                     -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
                     -DCMAKE_OSX_SYSROOT=${SDKROOT} \
                     -DCMAKE_MACOSX_RPATH=YES \
+                    -DCMAKE_C_VISIBILITY_PRESET="hidden" \
+                    -DCMAKE_CXX_VISIBILITY_PRESET="hidden" \
                     -DCMAKE_INSTALL_PREFIX=$stage
 
                 cmake --build . -j$JOBS --config Debug
 
-                cp -a libwebp*.a* "${stage}/lib/debug/"
+                cp -a *.a* "${stage}/lib/debug/"
             popd
 
             mkdir -p "build_release"
@@ -128,11 +130,14 @@ pushd "$LIBWEBP_SOURCE_DIR"
                     -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 \
                     -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
                     -DCMAKE_OSX_SYSROOT=${SDKROOT} \
-                    -DCMAKE_MACOSX_RPATH=YES -DCMAKE_INSTALL_PREFIX=$stage
+                    -DCMAKE_MACOSX_RPATH=YES \
+                    -DCMAKE_C_VISIBILITY_PRESET="hidden" \
+                    -DCMAKE_CXX_VISIBILITY_PRESET="hidden" \
+                    -DCMAKE_INSTALL_PREFIX=$stage
 
                 cmake --build . -j$JOBS --config Release
 
-                cp -a libwebp*.a* "${stage}/lib/release/"
+                cp -a *.a* "${stage}/lib/release/"
             popd
 
             # For dynamic library builds
