@@ -31,7 +31,7 @@ source_environment_tempfile="$stage/source_environment.sh"
 LIBWEBP_SOURCE_DIR="libwebp"
 
 # version will be (e.g.) "1.4.0"
-version="1.3.0"
+version="1.3.1"
 
 echo "${version}" > "${stage}/VERSION.txt"
 
