@@ -448,7 +448,7 @@ webpmux_CPPFLAGS = $(AM_CPPFLAGS)
 webpmux_LDADD = libexample_util.la ../imageio/libimageio_util.la \
 	../src/mux/libwebpmux.la ../src/libwebp.la
 img2webp_SOURCES = img2webp.c
-img2webp_CPPFLAGS = $(AM_CPPFLAGS)
+img2webp_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)
 img2webp_LDADD = libexample_util.la ../imageio/libimageio_util.la \
 	../imageio/libimagedec.la ../src/mux/libwebpmux.la \
 	../src/libwebp.la $(PNG_LIBS) $(JPEG_LIBS) $(TIFF_LIBS)
