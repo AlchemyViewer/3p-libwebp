@@ -65,93 +65,41 @@ pushd "$LIBWEBP_SOURCE_DIR"
         ;;
 
         darwin*)
-            # Setup osx sdk platform
-            SDKNAME="macosx"
-            export SDKROOT=$(xcodebuild -version -sdk ${SDKNAME} Path)
-            export MACOSX_DEPLOYMENT_TARGET=10.15
-
             # Setup build flags
-            ARCH_FLAGS="-arch x86_64"
-            SDK_FLAGS="-mmacosx-version-min=${MACOSX_DEPLOYMENT_TARGET} -isysroot ${SDKROOT}"
-            DEBUG_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -O0 -g -msse4.2 -fPIC -DPIC"
-            RELEASE_COMMON_FLAGS="$ARCH_FLAGS $SDK_FLAGS -Ofast -ffast-math -g -msse4.2 -fPIC -DPIC -fstack-protector-strong"
-            DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
-            RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
-            DEBUG_CXXFLAGS="$DEBUG_COMMON_FLAGS -std=c++17"
-            RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
-            DEBUG_CPPFLAGS="-DPIC"
-            RELEASE_CPPFLAGS="-DPIC"
-            DEBUG_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names"
-            RELEASE_LDFLAGS="$ARCH_FLAGS $SDK_FLAGS -Wl,-headerpad_max_install_names"
+            C_OPTS_X86="-arch x86_64 $LL_BUILD_RELEASE_CFLAGS"
+            C_OPTS_ARM64="-arch arm64 $LL_BUILD_RELEASE_CFLAGS"
+            CXX_OPTS_X86="-arch x86_64 $LL_BUILD_RELEASE_CXXFLAGS"
+            CXX_OPTS_ARM64="-arch arm64 $LL_BUILD_RELEASE_CXXFLAGS"
+            LINK_OPTS_X86="-arch x86_64 $LL_BUILD_RELEASE_LINKER"
+            LINK_OPTS_ARM64="-arch arm64 $LL_BUILD_RELEASE_LINKER"
 
-            JOBS=`sysctl -n hw.ncpu`
-
-            mkdir -p "build_debug"
-            pushd "build_debug"
-                CFLAGS="$DEBUG_CFLAGS" \
-                CXXFLAGS="$DEBUG_CXXFLAGS" \
-                CPPFLAGS="$DEBUG_CPPFLAGS" \
-                LDFLAGS="$DEBUG_LDFLAGS" \
-                cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="Debug" \
-                    -DBUILD_SHARED_LIBS=OFF -DWEBP_BUILD_ANIM_UTILS=OFF \
-                    -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF \
-                    -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
-                    -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
-                    -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF \
-                    -DCMAKE_C_FLAGS="$DEBUG_CFLAGS" \
-                    -DCMAKE_CXX_FLAGS="$DEBUG_CXXFLAGS" \
-                    -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 \
-                    -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
-                    -DCMAKE_OSX_SYSROOT=${SDKROOT} \
-                    -DCMAKE_MACOSX_RPATH=YES \
-                    -DCMAKE_C_VISIBILITY_PRESET="hidden" \
-                    -DCMAKE_CXX_VISIBILITY_PRESET="hidden" \
-                    -DCMAKE_INSTALL_PREFIX=$stage
-
-                cmake --build . -j$JOBS --config Debug
-
-                cp -a *.a* "${stage}/lib/debug/"
-            popd
+            # deploy target
+            export MACOSX_DEPLOYMENT_TARGET=${LL_BUILD_DARWIN_BASE_DEPLOY_TARGET}
 
             mkdir -p "build_release"
             pushd "build_release"
-                CFLAGS="$RELEASE_CFLAGS" \
-                CXXFLAGS="$RELEASE_CXXFLAGS" \
-                CPPFLAGS="$RELEASE_CPPFLAGS" \
-                LDFLAGS="$RELEASE_LDFLAGS" \
-                cmake .. -G"Unix Makefiles" -DCMAKE_BUILD_TYPE="Release" \
+                CFLAGS="$C_OPTS_X86" \
+                CXXFLAGS="$CXX_OPTS_X86" \
+                LDFLAGS="$LINK_OPTS_X86" \
+                cmake .. -G Ninja -DCMAKE_BUILD_TYPE="Release" \
                     -DBUILD_SHARED_LIBS=OFF -DWEBP_BUILD_ANIM_UTILS=OFF \
                     -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF \
                     -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF \
                     -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF \
                     -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF \
-                    -DCMAKE_C_FLAGS="$RELEASE_CFLAGS" \
-                    -DCMAKE_CXX_FLAGS="$RELEASE_CXXFLAGS" \
+                    -DCMAKE_C_FLAGS="$C_OPTS_X86" \
+                    -DCMAKE_CXX_FLAGS="$CXX_OPTS_X86" \
                     -DCMAKE_OSX_ARCHITECTURES:STRING=x86_64 \
                     -DCMAKE_OSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET} \
-                    -DCMAKE_OSX_SYSROOT=${SDKROOT} \
                     -DCMAKE_MACOSX_RPATH=YES \
                     -DCMAKE_C_VISIBILITY_PRESET="hidden" \
                     -DCMAKE_CXX_VISIBILITY_PRESET="hidden" \
                     -DCMAKE_INSTALL_PREFIX=$stage
 
-                cmake --build . -j$JOBS --config Release
+                cmake --build . -j$AUTOBUILD_CPU_COUNT --config Release
 
                 cp -a *.a* "${stage}/lib/release/"
             popd
-
-            # For dynamic library builds
-            # pushd "${stage}/lib/debug"
-            #     fix_dylib_id "libwebp.dylib"
-            #     fix_dylib_id "libwebpdecoder.dylib"
-            #     fix_dylib_id "libwebpdemux.dylib"
-            #     dsymutil libwebp.dylib
-            #     dsymutil libwebpdecoder.dylib
-            #     dsymutil libwebpdemux.dylib
-            #     strip -x -S libwebp.dylib
-            #     strip -x -S libwebpdecoder.dylib
-            #     strip -x -S libwebpdemux.dylib
-            # popd
 
             # pushd "${stage}/lib/release"
             #     fix_dylib_id "libwebp.dylib"
@@ -170,20 +118,24 @@ pushd "$LIBWEBP_SOURCE_DIR"
             cp -a src/webp/types.h $stage/include/webp/
         ;;
         linux*)
+            # Linux build environment at Linden comes pre-polluted with stuff that can
+            # seriously damage 3rd-party builds.  Environmental garbage you can expect
+            # includes:
+            #
+            #    DISTCC_POTENTIAL_HOSTS     arch           root        CXXFLAGS
+            #    DISTCC_LOCATION            top            branch      CC
+            #    DISTCC_HOSTS               build_name     suffix      CXX
+            #    LSDISTCC_ARGS              repo           prefix      CFLAGS
+            #    cxx_version                AUTOBUILD      SIGN        CPPFLAGS
+            #
+            # So, clear out bits that shouldn't affect our configure-directed build
+            # but which do nonetheless.
+            #
+            unset DISTCC_HOSTS CFLAGS CPPFLAGS CXXFLAGS
+
             # Default target per --address-size
-            opts="${TARGET_OPTS:--m$AUTOBUILD_ADDRSIZE}"
-
-            # Setup build flags
-            DEBUG_COMMON_FLAGS="$opts -Og -g -fPIC -DPIC"
-            RELEASE_COMMON_FLAGS="$opts -O3 -g -fPIC -DPIC -fstack-protector-strong -D_FORTIFY_SOURCE=2"
-            DEBUG_CFLAGS="$DEBUG_COMMON_FLAGS"
-            RELEASE_CFLAGS="$RELEASE_COMMON_FLAGS"
-            DEBUG_CXXFLAGS="$DEBUG_COMMON_FLAGS -std=c++17"
-            RELEASE_CXXFLAGS="$RELEASE_COMMON_FLAGS -std=c++17"
-            DEBUG_CPPFLAGS="-DPIC"
-            RELEASE_CPPFLAGS="-DPIC"
-
-            JOBS=`cat /proc/cpuinfo | grep processor | wc -l`
+            opts_c="${TARGET_OPTS:--m$AUTOBUILD_ADDRSIZE $LL_BUILD_RELEASE_CFLAGS}"
+            opts_cxx="${TARGET_OPTS:--m$AUTOBUILD_ADDRSIZE $LL_BUILD_RELEASE_CXXFLAGS}"
 
             # Handle any deliberate platform targeting
             if [ -z "${TARGET_CPPFLAGS:-}" ]; then
@@ -194,47 +146,18 @@ pushd "$LIBWEBP_SOURCE_DIR"
                 export CPPFLAGS="$TARGET_CPPFLAGS"
             fi
 
-            # Fix up path for pkgconfig
-            if [ -d "$stage/packages/lib/release/pkgconfig" ]; then
-                fix_pkgconfig_prefix "$stage/packages"
-            fi
-
-            OLD_PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-}"
-
             # force regenerate autoconf
             autoreconf -fvi
-
-            mkdir -p "build_debug"
-            pushd "build_debug"
-                # debug configure and build
-                export PKG_CONFIG_PATH="$stage/packages/lib/debug/pkgconfig:${OLD_PKG_CONFIG_PATH}"
-
-                CFLAGS="$DEBUG_CFLAGS" \
-                CXXFLAGS="$DEBUG_CXXFLAGS" \
-                ../configure --enable-static --disable-shared \
-                    --enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras \
-                    --prefix="\${AUTOBUILD_PACKAGES_DIR}" --includedir="\${prefix}/include" --libdir="\${prefix}/lib/debug"
-                make -j$JOBS
-                make check
-                make install DESTDIR="$stage"
-
-                # conditionally run unit tests
-                if [ "${DISABLE_UNIT_TESTS:-0}" = "0" ]; then
-                    make check
-                fi
-            popd
 
             mkdir -p "build_release"
             pushd "build_release"
                 # Release configure and build
-                export PKG_CONFIG_PATH="$stage/packages/lib/release/pkgconfig:${OLD_PKG_CONFIG_PATH}"
-
-                CFLAGS="$RELEASE_CFLAGS" \
-                CXXFLAGS="$RELEASE_CXXFLAGS" \
+                CFLAGS="$opts_c" \
+                CXXFLAGS="$opts_cxx" \
                 ../configure --enable-static --disable-shared \
                     --enable-libwebpmux --enable-libwebpdemux --enable-libwebpdecoder --enable-libwebpextras \
                     --prefix="\${AUTOBUILD_PACKAGES_DIR}" --includedir="\${prefix}/include" --libdir="\${prefix}/lib/release"
-                make -j$JOBS
+                make -j$AUTOBUILD_CPU_COUNT
                 make check
                 make install DESTDIR="$stage"
 
